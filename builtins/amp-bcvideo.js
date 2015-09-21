@@ -20,6 +20,17 @@ import {getLengthNumeral, isLayoutSizeDefined} from '../src/layout';
 import {loadPromise} from '../src/event-helper';
 import {registerElement} from '../src/custom-element';
 
+function GetVideoData(videoid, token)
+{
+    var bcURLrequest = 'https://api.brightcove.com/services/library?command=find_video_by_id&video_id=' + videoid + '&video_fields=videoFullLength&media_delivery=http&callback=BCL.onSearchResponse&token=' + token ;
+    var bcAPIrequest = new XMLHttpRequest();
+    bcAPIrequest.onreadystatechange = function() {
+        if (bcAPIrequest.readyState == 4 && bcAPIrequest.status == 200)
+            return(json.parse(bcAPIrequest.responseText);
+    }
+    bcAPIrequest("GET", theUrl, true); // true for asynchronous
+    bcAPIrequest.send(null);
+}
 
 /**
  * @param {!Window} win Destination window for the new element.
@@ -37,9 +48,18 @@ export function installVideo(win) {
       // TODO(dvoytenko): Add re-layout as well.
       var width = this.element.getAttribute('width');
       var height = this.element.getAttribute('height');
+
+
       var video = document.createElement('video');
-      if (this.element.getAttribute('src')) {
-        assertHttpsUrl(this.element.getAttribute('src'), this.element);
+
+      if (this.element.getAttribute('videoid') && this.element.getAttribute('token') ) {
+
+        var videoid = this.element.getAttribute('videoid');
+        var token = this.element.getAttribute('token');
+        var JSONvideoData = GetVideoData(videoid,token);
+        var VideoData = JSONvideoData[0].url;
+          this.element.setAttribute('src') =  VideoData.replace('http://','https://')
+
       }
       this.propagateAttributes(
           ['src', 'controls', 'autoplay', 'muted', 'loop'],
