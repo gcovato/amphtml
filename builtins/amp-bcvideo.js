@@ -20,9 +20,9 @@ import {getLengthNumeral, isLayoutSizeDefined} from '../src/layout';
 import {loadPromise} from '../src/event-helper';
 import {registerElement} from '../src/custom-element';
 
-function GetVideoData(videoid, token)
+function GetVideoData(videoid, apitoken)
 {
-    var bcURLrequest = 'https://api.brightcove.com/services/library?command=find_video_by_id&video_id=' + videoid + '&video_fields=videoFullLength&media_delivery=http&callback=BCL.onSearchResponse&token=' + token ;
+    var bcURLrequest = 'https://api.brightcove.com/services/library?command=find_video_by_id&video_id=' + videoid + '&video_fields=videoFullLength&media_delivery=http&callback=BCL.onSearchResponse&token=' + apitoken ;
     var callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
     window[callbackName] = function(data) {
         delete window[callbackName];
