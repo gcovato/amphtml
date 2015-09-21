@@ -23,14 +23,23 @@ import {registerElement} from '../src/custom-element';
 function GetVideoData(videoid, token)
 {
     var bcURLrequest = 'https://api.brightcove.com/services/library?command=find_video_by_id&video_id=' + videoid + '&video_fields=videoFullLength&media_delivery=http&callback=BCL.onSearchResponse&token=' + token ;
-    var bcAPIrequest = new XMLHttpRequest();
-    bcAPIrequest.onreadystatechange = function() {
-        if (bcAPIrequest.readyState == 4 && bcAPIrequest.status == 200)
-            return(json.parse(bcAPIrequest.responseText);
-    }
-    bcAPIrequest("GET", theUrl, true); // true for asynchronous
-    bcAPIrequest.send(null);
+    var callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+    window[callbackName] = function(data) {
+        delete window[callbackName];
+        document.body.removeChild(script);
+        callback(data);
+    };
+
+    var script = document.createElement('script');
+    script.src = bcURLrequest + (bcURLrequest.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
+    document.body.appendChild(script);
 }
+
+var BCL = new Object;
+BCL.onSearchResponse = function(data) {
+	var VideoData = JSONvideoData[0].url;
+	this.element.setAttribute('src') =  VideoData.replace('http://','https://')
+};
 
 /**
  * @param {!Window} win Destination window for the new element.
@@ -57,9 +66,6 @@ export function installVideo(win) {
         var videoid = this.element.getAttribute('videoid');
         var token = this.element.getAttribute('token');
         var JSONvideoData = GetVideoData(videoid,token);
-        var VideoData = JSONvideoData[0].url;
-          this.element.setAttribute('src') =  VideoData.replace('http://','https://')
-
       }
       this.propagateAttributes(
           ['src', 'controls', 'autoplay', 'muted', 'loop'],
@@ -78,5 +84,5 @@ export function installVideo(win) {
     }
   }
 
-  registerElement(win, 'amp-video', AmpVideo);
+  registerElement(win, 'amp-bcvideo', AmpVideo);
 }
