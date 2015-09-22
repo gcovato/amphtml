@@ -78,6 +78,7 @@ function buildExtensions(options) {
   buildExtension('amp-slides', '0.1', false, options);
   buildExtension('amp-twitter', '0.1', false, options);
   buildExtension('amp-youtube', '0.1', false, options);
+  buildExtension('amp-bcvideo', '0.1', false, options);
 }
 
 function clean(done) {
